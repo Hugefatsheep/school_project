@@ -4,7 +4,7 @@ import os
 from Movie import Movie
 import pymysql
 import requests
-from functions import log
+from functions import log, change_ip
 from api import api, tags
 
 
@@ -82,4 +82,5 @@ if __name__ == '__main__':
         get_movies(cursor)
     except:
         log("主动停止")
+        exit()
         db.commit()

@@ -17,7 +17,7 @@ class Movie:
         self.url = information['url']
         try:
             content = requests.get(api[1] + self.id).text
-        except (ConnectionRefusedError,ConnectionError):        #检测连接是否被拒绝
+        except (ConnectionRefusedError, ConnectionError, ConnectionAbortedError):  # 检测连接是否被拒绝
             log('连接被拒绝 切换ip', 2)
             change_ip()
             content = requests.get(api[1] + self.id).text
