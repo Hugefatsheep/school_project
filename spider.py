@@ -38,9 +38,7 @@ def get_information():
                     log(str(message) + '\n' + tag + str(start), 1)
 
 
-def get_movies():
-    db = pymysql.connect("localhost", 'root', 'root', 'film_recommendation', charset='utf8')
-    cursor = db.cursor()
+def get_movies(cursor):
     for root, dir, files in os.walk('movies'):
         for filename in files:
             if str(filename).endswith('.finished'):
@@ -72,9 +70,16 @@ def get_movies():
                 print(sql)
                 log(filename[:-5] + str(message), 1)
                 exit()
+
             os.rename('movies/%s' % filename, 'movies/%s' % filename + '.finished')
 
 
 if __name__ == '__main__':
     # get_information()
-    get_movies()
+    db = pymysql.connect("localhost", 'root', 'root', 'film_recommendation', charset='utf8')
+    cursor = db.cursor()
+    try:
+        get_movies(cursor)
+    except:
+        log("主动停止")
+        db.commit()
