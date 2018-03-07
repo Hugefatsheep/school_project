@@ -62,10 +62,13 @@ def get_movies():
                         "\"" + movie.image + "\"", "\"" + movie.plot.replace("\"", "'") + "\"",
                         "\"" + movie.date + "\"", "\"" + movie.runtime + "\"")
                     cursor.execute(sql)
-                    db.commit()
                     number += 1
+                    if number % 100 == 0:
+                        db.commit()
                     log(filename[:-5] + '第' + str(number) + '部电影--' + movie.title + '--id:' + movie.id + '收录完成')
+                db.commit()
             except Exception as message:
+                db.commit()
                 print(sql)
                 log(filename[:-5] + str(message), 1)
                 exit()
