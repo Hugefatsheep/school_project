@@ -15,9 +15,14 @@ class Movie:
         self.rate = information['rate'] if len(information['rate']) != 0 else 0
         self.star = information['star'] if len(information['star']) != 0 else 0
         self.url = information['url']
-        content = requests.get(api[1] + self.id).text
+        try:
+            content = requests.get(api[1] + self.id).text
+        except (ConnectionRefusedError,ConnectionError):        #检测连接是否被拒绝
+            log('连接被拒绝 切换ip', 2)
+            change_ip()
+            content = requests.get(api[1] + self.id).text
         if '检测到' in str(content) or '#info' not in str(content):  # 检测ip是否被ban
-            log('切换ip', 2)
+            log('ip 被ban 切换ip', 2)
             change_ip()
             content = requests.get(api[1] + self.id).text
         soup = BeautifulSoup(content, "html.parser")

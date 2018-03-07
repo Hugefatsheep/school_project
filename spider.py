@@ -43,11 +43,13 @@ def get_movies():
     cursor = db.cursor()
     for root, dir, files in os.walk('movies'):
         for filename in files:
-            number = 0;
+            if str(filename).endswith('.finished'):
+                continue
+            number = 0
             with open('movies/%s' % filename, 'r') as file:
                 movies = json.load(file)
             try:
-                for i in movies.copy():
+                for i in movies:
                     cursor.execute("select exists (select * from movies where id=%s)" % i['id'])  # 判断是否重复
                     if cursor.fetchone()[0] == 1:
                         number += 1
@@ -61,14 +63,13 @@ def get_movies():
                         "\"" + movie.date + "\"", "\"" + movie.runtime + "\"")
                     cursor.execute(sql)
                     db.commit()
-                    movies.pop(0)
                     number += 1
                     log(filename[:-5] + '第' + str(number) + '部电影--' + movie.title + '--id:' + movie.id + '收录完成')
-
             except Exception as message:
                 print(sql)
                 log(filename[:-5] + str(message), 1)
                 exit()
+            os.rename('movies/%s' % filename, 'movies/%s' % filename + '.finished')
 
 
 if __name__ == '__main__':
